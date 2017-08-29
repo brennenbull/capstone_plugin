@@ -11,7 +11,6 @@ function getCurrentTabUrl(callback) {
   chrome.tabs.query(queryInfo, function(tabs) {
     var tab = tabs[0];
     var url = tab.url;
-    console.log(url);
     callback(url);
   });
 }
@@ -23,12 +22,17 @@ let newNote = {
 
 port.onMessage.addListener(function(msg) {
   if(msg.userNotes == 'true'){
-    document.getElementsByClassName('person')[0].innerHTML = msg.notes.title;
-    document.getElementsByClassName('info')[0].innerHTML = msg.notes.content;
+    for(let i = 0; i < msg.notes.length; i++){
+      let newdiv = document.createElement("div");
+      let newTitle = document.createElement("h3");
+      newTitle.innerHTML = msg.notes[i].title;
+      let newContent = document.createElement("p");
+      newContent.innerHTML = msg.notes[i].content;
+      newdiv.appendChild(newTitle)
+      newdiv.appendChild(newContent)
+      document.getElementsByClassName('db-notes')[0].appendChild(newdiv);
+    }
   }
-  // console.log("message recieved " + msg.notes);
-  // document.getElementsByClassName('notes')[0].innerHTML = "message recieved " + msg.notes.title + ": " + msg.notes.content
-
 });
 
 
@@ -52,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
     port.postMessage(
       {
         shouldGet: true,
-        message: parser.hostname
+        message: name
       }
     );
   });
@@ -75,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('new note', newNote);
     port.postMessage(
       {
-        postParams: parser.hostname,
+        postParams: name,
         shouldPost: true,
         note: newNote
       }
