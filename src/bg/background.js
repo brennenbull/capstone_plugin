@@ -1,5 +1,6 @@
 chrome.extension.onConnect.addListener(function(port){
   port.onMessage.addListener(function(msg, send){
+
     if(msg.shouldGet){
       fetch(`http://localhost:8380/notes/?host=${msg.message}`,{
         method: 'GET',
@@ -9,11 +10,10 @@ chrome.extension.onConnect.addListener(function(port){
         }})
         .then((resp) => resp.json())
         .then(function(data) {
-          console.log('from server', data)
           port.postMessage(data);
       });
     }else if(msg.shouldPost){
-      parser = msg.postParams;
+      let parser = msg.postParams;
       let name;
       if(parser.indexOf('com') === -1){
         name = parser;
@@ -29,7 +29,7 @@ chrome.extension.onConnect.addListener(function(port){
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(msg.note),
+        body: JSON.stringify(msg.note)
       })
       .then((resp) => resp.json())
       .then(function(data) {

@@ -39,10 +39,10 @@ port.onMessage.addListener(function(msg) {
 document.addEventListener('DOMContentLoaded', function() {
   // NOTE: Gets Current Tab When Popup is Triggered
   let parser;
+  let name;
   getCurrentTabUrl(function(url) {
     parser = document.createElement('a');
     parser.href= url;
-    let name;
     if(parser.hostname.indexOf('com') === -1){
       name = url;
     }else if (parser.hostname.indexOf('www') === -1){
@@ -76,7 +76,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // NOTE: Adds Submit Listen and Sends to BG.js
   let button = document.getElementsByClassName('click')[0]
   button.addEventListener('click', ()=>{
-    console.log('new note', newNote);
     port.postMessage(
       {
         postParams: name,
