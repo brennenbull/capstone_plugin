@@ -15,23 +15,47 @@ function getCurrentTabUrl(callback) {
   });
 }
 
+function printNotes(msg) {
+  let dbNotes = document.getElementsByClassName('db-notes')[0];
+  while(dbNotes.hasChildNodes()){
+    dbNotes.removeChild(dbNotes.lastChild);
+  }
+  for(let i = 0; i < msg.notes.length; i++){
+    let newdiv = document.createElement("div");
+    let newTitle = document.createElement("h3");
+    newTitle.innerHTML = msg.notes[i].title;
+    let newContent = document.createElement("p");
+    newContent.innerHTML = msg.notes[i].content;
+    newdiv.appendChild(newTitle)
+    newdiv.appendChild(newContent)
+    document.getElementsByClassName('db-notes')[0].appendChild(newdiv);
+  }
+}
+
 let newNote = {
   title:'',
   content:'',
 }
 
+let newCat = {
+  categorie: '',
+}
+
 port.onMessage.addListener(function(msg) {
-  if(msg.userNotes == 'true'){
-    for(let i = 0; i < msg.notes.length; i++){
-      let newdiv = document.createElement("div");
-      let newTitle = document.createElement("h3");
-      newTitle.innerHTML = msg.notes[i].title;
-      let newContent = document.createElement("p");
-      newContent.innerHTML = msg.notes[i].content;
-      newdiv.appendChild(newTitle)
-      newdiv.appendChild(newContent)
-      document.getElementsByClassName('db-notes')[0].appendChild(newdiv);
+  console.log(msg);
+  if(msg.userNotes == 'true' && msg.categories){
+    let categories = document.getElementsByClassName('categorie-menu')[0];
+    for(let i = 0; i< msg.categories.length; i++){
+      let newLi = document.createElement("li");
+      let newA = document.createElement("a");
+      newA.innerHTML = msg.categories[i].categorie;
+      newLi.appendChild(newA);
+      categories.appendChild(newLi);
     }
+    printNotes(msg);
+    return
+  }else if(msg.userNotes == 'true' && !msg.categories){
+    printNotes(msg);
   }
 });
 
@@ -76,6 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // NOTE: Adds Submit Listen and Sends to BG.js
   let button = document.getElementsByClassName('click')[0]
   button.addEventListener('click', ()=>{
+    console.log(newNote);
     port.postMessage(
       {
         postParams: name,
@@ -90,4 +115,25 @@ document.addEventListener('DOMContentLoaded', function() {
     content.value = "";
     title.value = "";
   }, false);
+
+  // NOTE: Get new category name;
+  let cat = document.getElementsByClassName('new-cat')[0]
+  cat.value='';
+  cat.addEventListener('change', (e)=>{
+    newCat.categorie = e.target.value;
+  })
+  // NOTE: Add new post request for category;
+  let addCat = document.getElementsByClassName('add-cat')[0];
+  addCat.addEventListener('click', ()=>{
+    port.postMessage(
+      {
+        shouldPostCat:true,
+        category: newCat
+      }
+    );
+    newCat={
+      categorie: '',
+    };
+    cat.value='';
+  })
 });
