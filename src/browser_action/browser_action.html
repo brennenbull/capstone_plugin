@@ -14,30 +14,34 @@
     <div class="content">
       <div class='header' id="status">
         <h4 id='url'></h4>
-      </div>
-      <div class="dropdown">
-        <ul>
-          <li class='categories'>
-            <a class='selected'>Add a Categorie</a>
-            <form class="new-cat-form">
-              <input class="new-cat"type="text" name="" value="">
-            </form>
-            <button type="button" name="button" class="add-cat">+</button>
-            <ul class='categorie-menu'>
-            </ul>
-          </li>
-        </ul>
+        <h4 id='flag'></h4>
+        <div class="dropdown">
+          <ul>
+            <li class='categories'>
+              <a class='selected'>Add a Categorie</a>
+              <form class="new-cat-form">
+                <input class="new-cat"type="text" name="" value="">
+                <button type="button" name="button" class="add-cat">+</button>
+              </form>
+              <ul class='categorie-menu'>
+              </ul>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-		<form class="new-note">
-			<input class="note-title" type="text" name="" value="" placeholder="add a title">
-			<input class="note-content" type="text" name="" value=""
-			placeholder="add a new note">
-		</form>
-		<button class="click" type="button" name="button">Add Note</button>
+    <div class="form-contain">
+  		<form class="new-note form">
+        <label for="title">Title:</label>
+  			<input class="note-title form__field" type="text" name="title" value="" placeholder="title">
+        <label for="content">Note:</label>
+  			<input class="note-content form__field" type="text" name="content" value=""
+  			placeholder="contetn">
+  		</form>
+  		<button class="click" type="button" name="button">Add Note</button>
+    </div>
 		<div class="db-notes">
 
 		</div>
-		<p class='notes'></p>
   </body>
 </html>

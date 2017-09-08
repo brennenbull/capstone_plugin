@@ -3,6 +3,16 @@ var port = chrome.extension.connect({
       name: "database communication"
 });
 
+let newNote = {
+  title:'',
+  content:'',
+  category: ''
+}
+
+let newCat = {
+  category: '',
+}
+
 function getCurrentTabUrl(callback) {
   var queryInfo = {
     active: true,
@@ -32,27 +42,39 @@ function printNotes(msg) {
   }
 }
 
-let newNote = {
-  title:'',
-  content:'',
-}
 
-let newCat = {
-  categorie: '',
-}
 
 port.onMessage.addListener(function(msg) {
-  console.log(msg);
+  console.log('message sent: ', msg);
+  // NOTE: add category and notes
   if(msg.userNotes == 'true' && msg.categories){
     let categories = document.getElementsByClassName('categorie-menu')[0];
+    while(categories.hasChildNodes()){
+      categories.removeChild(categories.lastChild);
+    }
     for(let i = 0; i< msg.categories.length; i++){
       let newLi = document.createElement("li");
       let newA = document.createElement("a");
-      newA.innerHTML = msg.categories[i].categorie;
+      newA.addEventListener('click', function(){
+        newNote.category = msg.categories[i].category;
+        document.getElementById('flag').innerHTML = msg.categories[i].category;
+      })
+      newA.innerHTML = msg.categories[i].category;
       newLi.appendChild(newA);
       categories.appendChild(newLi);
     }
-    printNotes(msg);
+    let lastLi = document.createElement("li");
+    let lastA = document.createElement("a");
+    lastA.addEventListener('click', function(){
+      newNote.category = 'none';
+      document.getElementById('flag').innerHTML ='none';
+    })
+    lastA.innerHTML = 'none';
+    lastLi.appendChild(lastA);
+    categories.appendChild(lastLi);
+    if(msg.notes.length !== 0){
+      printNotes(msg);
+    }
     return
   }else if(msg.userNotes == 'true' && !msg.categories){
     printNotes(msg);
@@ -111,6 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
     newNote = {
       title:'',
       content:'',
+      category: '',
     }
     content.value = "";
     title.value = "";
@@ -120,8 +143,9 @@ document.addEventListener('DOMContentLoaded', function() {
   let cat = document.getElementsByClassName('new-cat')[0]
   cat.value='';
   cat.addEventListener('change', (e)=>{
-    newCat.categorie = e.target.value;
+    newCat.category = e.target.value;
   })
+
   // NOTE: Add new post request for category;
   let addCat = document.getElementsByClassName('add-cat')[0];
   addCat.addEventListener('click', ()=>{
@@ -132,8 +156,12 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     );
     newCat={
-      categorie: '',
+      category: '',
     };
     cat.value='';
   })
+  // NOTE: flag a category
+
+
+
 });

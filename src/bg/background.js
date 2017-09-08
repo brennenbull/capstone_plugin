@@ -1,6 +1,7 @@
 chrome.extension.onConnect.addListener(function(port){
   port.onMessage.addListener(function(msg, send){
     if(msg.shouldGet){
+      console.log(msg.shouldGet);
       fetch(`http://localhost:8380/notes/?host=${msg.message}`,{
         method: 'GET',
         headers: {
@@ -9,6 +10,7 @@ chrome.extension.onConnect.addListener(function(port){
         }})
         .then((resp) => resp.json())
         .then(function(data) {
+          console.log(data)
           port.postMessage(data);
       });
     }else if(msg.shouldPost){
@@ -35,7 +37,6 @@ chrome.extension.onConnect.addListener(function(port){
         port.postMessage(resdata);
       });
     }else if(msg.shouldPostCat){
-      console.log('adding new cat');
       fetch('http://localhost:8380/categories/',{
         method: 'POST',
         headers: {
@@ -44,6 +45,10 @@ chrome.extension.onConnect.addListener(function(port){
         },
         body: JSON.stringify(msg.category)
       })
+      .then((respon)=>respon.json())
+      .then((respondata)=>{
+        port.postMessage(respondata);
+      });
     }
   });
 });
